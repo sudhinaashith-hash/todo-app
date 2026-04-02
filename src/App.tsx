@@ -43,12 +43,12 @@ const deleteTask = (id: number) => {
         Task Manager
       </h1>
 
-      <div className="mb-4">
+      <div className="flex w-full gap-2 mb-4">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="border p-2 mr-2 rounded w-full"
+          className="border p-2 mr-2 rounded flex-1 min-w-0"
           placeholder="Enter task..."
         />
         <button
