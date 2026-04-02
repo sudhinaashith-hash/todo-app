@@ -7,13 +7,18 @@ interface Props {
 function TaskItem({ task, onToggle, onDelete }: Props) {
   return (
     <li className="bg-white p-3 rounded shadow flex justify-between items-center">
+        <input
+        type="checkbox"
+        checked={task.completed}
+        onChange={() => onToggle(task.id)}
+      />
       <span
         onClick={() => onToggle(task.id)}
         className={`cursor-pointer ${
           task.completed ? "line-through text-gray-400" : ""
         }`}
       >
-        {task.title} 
+        {task.title}
       </span>
 
       <button

@@ -48,7 +48,7 @@ const deleteTask = (id: number) => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="border p-2 mr-2 rounded"
+          className="border p-2 mr-2 rounded w-full"
           placeholder="Enter task..."
         />
         <button
@@ -57,8 +57,7 @@ const deleteTask = (id: number) => {
         >
           Add
         </button>
-      </div>
-
+      </div>      
       <p className="text-gray-700">
         Total: {tasks.length} | Completed: {tasks.filter(t => t.completed).length}
       </p>
