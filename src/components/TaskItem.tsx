@@ -4,7 +4,7 @@ interface Props {
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
 }
-function TaskItem({ task, onToggle, onDelete }: Props) {
+function TaskItem({ task, onToggle, onDelete }: Props) {    
   return (
     <li className="bg-white p-3 rounded shadow flex justify-between items-center">
         <input
