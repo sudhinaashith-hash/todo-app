@@ -23,7 +23,7 @@ function App() {
     if (!title.trim()) return;
 
     const newTask: Task = {
-      id: tasks.length + 1,
+      id: Date.now(),
       title,
       completed: false,
     };
@@ -32,8 +32,8 @@ function App() {
     setTitle("");
   };
   const toggleTask = (id: number) => {
-    setTasks(
-      filteredTasks.map((task) =>
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
         task.id === id
           ? { ...task, completed: !task.completed }
           : task
@@ -66,7 +66,7 @@ function App() {
               onChange={(e) => setTitle(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  {addTask}
+                  addTask(); 
                 }
               }}         
             />
