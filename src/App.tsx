@@ -1,94 +1,57 @@
-import { useState, useEffect } from "react";
-import type { Task } from "./types";
 import TaskItem from "./components/TaskItem";
+import { useTasks } from "./hooks/useTasks";
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    const saved = localStorage.getItem("tasks");
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [title, setTitle] = useState("");
-  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "active") return !task.completed;
-    if (filter === "completed") return task.completed;
-    return true;
-  });
-  const remainingTasks = tasks.filter(task => !task.completed).length;
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  const addTask = () => {
-    if (!title.trim()) return;
-
-    const newTask: Task = {
-      id: Date.now(),
-      title,
-      completed: false,
-    };
-
-    setTasks([...tasks, newTask]);
-    setTitle("");
-  };
-  const toggleTask = (id: number) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
-          : task
-      )
-    );
-  };
-  const deleteTask = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
-  const updateTask = (id: number, newText: string) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, title: newText } : task
-      )
-    );
-  };
+  const { tasks, addTask, toggleTask, deleteTask, updateTask, filteredTasks, remainingTasks, title, setTitle, filter, setFilter } = useTasks();
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-4 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-lg transition-all">
+          <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
             Task Manager
           </h1>
 
           <div className="flex w-full gap-2 mb-4">
-            <input
-              type="text"
-              value={title}
-              className="flex-1 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 min-w-0"
-              placeholder="Enter task..."
-              onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  addTask(); 
-                }
-              }}         
-            />
-            <button
-              onClick={addTask}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded"
-            >
-              Add
-            </button>        
+            <div className="flex w-full gap-2 mb-5">
+              <input
+                type="text"
+                value={title}
+                className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                placeholder="Enter task..."
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    addTask();
+                    setTitle("");
+                  }
+                }}
+              />
+
+              <button
+                onClick={() => {
+                  addTask();
+                  setTitle("");
+                }}
+                className="bg-blue-500 hover:bg-blue-600 active:scale-95 transition text-white px-5 rounded-lg"
+              >
+                Add
+              </button>
+            </div>       
           </div>      
-          <p className="text-gray-700">
-            Total: {tasks.length} | Completed: {tasks.filter(t => t.completed).length}
-          </p>
-          <p className="text-sm text-gray-600 mb-2">
-            {remainingTasks} tasks remaining
-          </p>
-          <div className="flex gap-2 mb-4">
+          <div className="text-sm text-gray-600 mb-4 text-center">
+            <p>
+              Total: <span className="font-semibold">{tasks.length}</span> | Completed:{" "}
+              <span className="font-semibold">
+                {tasks.filter((t) => t.completed).length}
+              </span>
+            </p>
+            <p>{remainingTasks} tasks remaining</p>
+          </div>
+          <div className="flex justify-center gap-2 mb-4">
             <button
               onClick={() => setFilter("all")}
-              className={`px-3 py-1 rounded transition ${
+              className={`px-4 py-1.5 rounded-full text-sm transition ${
                 filter === "all"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-500 text-white shadow"
                   : "bg-gray-200 hover:bg-gray-300"
               }`}
               >
@@ -113,8 +76,14 @@ function App() {
               Completed
             </button>
           </div>
-          <ul className="mt-4 space-y-2 transition duration-200">
-            {filteredTasks.map((task) => (
+          <ul className="mt-4 space-y-3 transition-all duration-300">
+            {filteredTasks.length === 0 ? (
+              <div className="text-center text-gray-400 py-6">
+                <p className="text-lg">No tasks found 👀</p>
+                <p className="text-sm">Try adding a new task!</p>
+              </div>
+            ) : (
+            filteredTasks.map((task) => (
             <TaskItem
                 key={task.id}
                 task={task}
@@ -122,7 +91,7 @@ function App() {
                 onDelete={deleteTask}
                 onUpdate={updateTask}
               />
-            ))}
+            )))}
           </ul>      
       </div>
     </div>
